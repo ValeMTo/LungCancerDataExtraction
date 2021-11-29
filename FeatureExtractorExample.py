@@ -3,23 +3,22 @@ from __future__ import print_function
 
 import radiomics
 import six
-import logging
 from radiomics import featureextractor
 
+#Using the notebook "Hello Radiomics example"
+
 #Setting up logging
+
+# Regulate verbosity of radiomics during the extraction:
+# 30: log messages of level "Warning, errors and critical" --Default
+# 20: info too
+# 10: debug too
 radiomics.setVerbosity(logging.WARNING)
 
-#TODO: analyse with DEBUG and INFO verbosity
 logger = radiomics.logger
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.WARNING) #Levels are the same of above
+#There is the possibility to save the log in a file
 
-handler = logging.FileHandler(filename='testLog.txt', mode = 'w')
-formatter = logging.Formatter('%(levelname)s:%(name)s: %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-
-#TODO: add input (treat DICOM images)
 # Getting data
 imagePath, maskPath = radiomics.getTestCase('brain1')
 
@@ -29,10 +28,8 @@ if imagePath is None or maskPath is None:
 # Instantiate data
 
 #TODO: parameter file. The following code extracts data by default options
-#parameter of first order: pyradiomics -> radiomic feature -> first order statistics && gray level co-occurrence matrix (GMLM) features
 # Do i need a filter?
 # Try all filters and add the option to use them as requested
-
 extractor = featureextractor.RadiomicsFeatureExtractor()
 
 print('Extraction parameters:\n\t', extractor.settings)
@@ -46,4 +43,3 @@ for key, value in six.iteritems(result):
     print('\t', key, ':', value)
 
 #TODO: save the data on a cvs file
-#TODO: Visualize features - matrix and graphics
