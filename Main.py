@@ -1,6 +1,7 @@
 
 from __future__ import print_function
 
+import SimpleITK
 import radiomics
 import six
 import logging
@@ -22,6 +23,15 @@ logger.addHandler(handler)
 #TODO: add input (treat DICOM images)
 # Getting data
 imagePath, maskPath = radiomics.getTestCase('brain1')
+
+imagePath = ""
+
+#Converting a series of DICOM images in a NRRD file
+reader = SimpleITK.ImageSeriesReader()
+dicomReader = reader.GetGDCMSeriesFileNames(inputPath) #input is the DCM file path
+reader.SetFileNames(dicomReader)
+dicoms = reader.Execute()
+SimpleITK.WriteImage(dicoms, fileName) #fileName like "brain.nrrd"
 
 if imagePath is None or maskPath is None:
     raise Exception('Error getting testcase!')
