@@ -1,1 +1,0 @@
-WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
