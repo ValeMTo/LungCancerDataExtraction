@@ -33,9 +33,14 @@ class DICOM_to_NRRD:
     def batch_dicom_to_nrrd(self, dicom_root, nrrd_root):
         """Iterativly convert all dicom data in dicom_root to nrrd
         """
-        dicom_files_dirs = glob.glob(dicom_root + '/*')
+        print(dicom_root+"/*")
+        dicom_files_dirs = glob.glob(dicom_root+"/*")
+        print(type(dicom_files_dirs))
+        print(len(dicom_files_dirs))
+        i=0
         for dicom_subject in dicom_files_dirs:
-            subject = re.search(self.KEY_WORD_FLODER, dicom_subject).group()
+            print("dicom_subject number ", i, ": ", dicom_subject)
+            subject = re.search(self.KEY_WORD_FLODER, dicom_subject).group
             nrrd_subject = nrrd_root + '/' + subject
             self.dicom_to_nrrd(dicom_subject, nrrd_subject)
 
@@ -148,24 +153,45 @@ class DICOM_to_NRRD:
 
 
 def main(argv):
-    dicom_root = ''
-    nrrd_root = ''
+    dicom_root = 'C:\\NECSTCamp\LungCancerDataExtraction\data\dicom'
+    nrrd_root = 'C:\\NECSTCamp\LungCancerDataExtraction\data\conversionNRRD'
+    print("1")
+
+    nrrdElement = DICOM_to_NRRD()
+    print("10")
+    nrrdElement.batch_dicom_to_nrrd(dicom_root, nrrd_root)
+    print("11")
+
+"""
     try:
+        print("2")
         opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
     except getopt.GetoptError:
+        print("3")
         print ('DICOM_to_NRRD.py -i <input_folder> -o <output_folder>')
 
+    print(type(opts))
     for opt, arg in opts:
+        print("4.0")
+        print(opt, "arg: ", arg)
+        print("4")
         if opt == '-h':
+            print("5")
             print ('test.py -i <input_file> -o <output_file>')
+            print("6")
             sys.exit()
         elif opt in ("-i", "--ifile"):
+            print("7")
             dicom_root = arg
         elif opt in ("-o", "--ofile"):
+            print("8")
             nrrd_root = arg
+    print("9")
+"""
 
-    DICOM_to_NRRD().batch_dicom_to_nrrd(dicom_root, nrrd_root)
+
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
