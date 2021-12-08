@@ -11,7 +11,6 @@ import six
 import logging
 import pydicom
 import glob
-from radiomics import featureextractor
 
 def dcmImageToNRRD(inputDICOMImageDir, tempDir):
   scanNRRDFile = os.path.join(tempDir, "image.nrrd")
