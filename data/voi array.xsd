@@ -1,0 +1,389 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!-- format for comment statements -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   elementFormDefault="qualified" version="3.12">
+
+<xsd:simpleType name= "Subtlety">
+	<xsd:annotation>
+		<xsd:documentation>
+			This is the Radiologist's subjective score on the detectability of the nodule.  
+			
+			The permissible values are:
+			1 - Extremely Subtle
+			2 - Moderately Subtle
+			3 - Fairly Subtle
+			4 - Moderately Obvious
+			5 - Obvious
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="5"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "InternalStructure">
+	<xsd:annotation>
+		<xsd:documentation>
+			This is the radiologist's characterization of the internal structure of the nodule.
+			
+			The permissible values are:
+			1 - Soft Tissue (Default)
+			2 - Fluid
+			3 - Fat
+			4 - Air
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="4"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "Calcification">
+	<xsd:annotation>
+		<xsd:documentation>
+			This is the radiologist's characterization of the internal structure of the nodule with respect
+			to calcification of the nodule.
+			
+			The permissible values are:
+			1 - Popcorn
+			2 - Laminated
+			3 - Solid
+			4 - Non-Central
+			5 - Central
+			6 - Absent
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="6"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "Sphericity">
+	<xsd:annotation>
+		<xsd:documentation>
+			The radiologist's assessment of the sphericity or roundness of the nodule.
+			
+			The permissible values are:
+			1 - Linear
+			2  
+			3 - Ovoid
+			4  
+			5 - Round
+			
+			Values inbetween are allowed though unlabeled.
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="5"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "Margin">
+	<xsd:annotation>
+		<xsd:documentation>
+			The radiologist's assessment of the sharpness of the nodule's margin.
+			
+			The permissible values are:
+			1 - Poorly
+			2  
+			3  
+			4  
+			5 - Sharp
+			
+			Values inbetween are allowed though unlabeled.
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="5"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "Lobulation">
+	<xsd:annotation>
+		<xsd:documentation>
+			The radiologist's assessment of the lobulation of the nodule.
+			
+			The permissible values are:
+			1 - None
+			2  
+			3  
+			4  
+			5 - Marked
+			
+			Values inbetween are allowed though unlabeled.
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="5"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "Spiculation">
+	<xsd:annotation>
+		<xsd:documentation>
+			The radiologist's assessment of the spiculation of the nodule.	
+		
+			The permissible values are:
+			1 - None
+			2  
+			3  
+			4  
+			5 - Marked
+			
+			Values inbetween are allowed though unlabeled.
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="5"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "Texture">
+	<xsd:annotation>
+		<xsd:documentation>
+			The radiologist's assessment of the texture of the nodule.
+		
+			The permissible values are:
+			1 - Non-Solid/Ground Glass Opacity
+			2  
+			3 - Part Solid/Mixed 
+			4  
+			5 - Solid
+			
+			Values inbetween are allowed though unlabeled.
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="5"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "Malignancy">
+	<xsd:annotation>
+		<xsd:documentation>
+			The radiologist's assessment of the likelihood of malignancy of the nodule, based
+			solely on appearance.
+		
+			The permissible values are:
+			1 - Highly Unlikely for Cancer
+			2 - Moderately Unlikely for Cancer 
+			3 - Indeterminate 
+			4 - Moderately Suspicious for Cancer 
+			5 - Highly Suspicious for Cancer
+			
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:unsignedByte">
+        <xsd:minInclusive value="1"/>
+        <xsd:maxInclusive value="5"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name= "LobarLocation">
+	<xsd:annotation>
+		<xsd:documentation>
+			This is the radiologist's localization of the nodule within the lung.
+			
+			The permissible values are:
+			RUL - right uppper lobe
+			RML - right middle lobe
+			RLL - right lower lobe
+			LUL - left upper lobe
+			LLL - left lower lobe
+			unidentified
+			
+		</xsd:documentation>
+	</xsd:annotation>
+    <xsd:restriction base="xsd:string">
+	<xsd:enumeration value="RUL"/>
+	<xsd:enumeration value="RML"/>
+	<xsd:enumeration value="RLL"/>
+	<xsd:enumeration value="LUL"/>
+	<xsd:enumeration value="LLL"/>
+	<xsd:enumeration value="null"/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+
+
+
+ <xsd:element name = "readingSession">
+  <xsd:complexType>
+   <xsd:sequence>
+    <xsd:element ref = "annotationVersion" minOccurs="1" maxOccurs="1"/>
+    <xsd:element ref = "servicingRadiologistID"/>
+    <xsd:choice>
+      <xsd:element ref = "unblindedReadNodule" minOccurs = "0" maxOccurs = "unbounded"/>
+      <xsd:element ref = "blindedReadNodule" minOccurs = "0" maxOccurs = "unbounded"/>
+    </xsd:choice>
+    <xsd:element ref = "nonNodule"  minOccurs = "0" maxOccurs = "unbounded"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:element>
+ 
+ <xsd:element name = "readingSessionType" type = "xsd:string"/>
+ <xsd:element name = "annotationVersion" type = "xsd:string" default="3.12"/>
+  <xsd:element name = "servicingRadiologistID" type = "xsd:string"/>
+
+<xsd:element name = "unblindedReadNodule">
+ <xsd:annotation>
+ 	<xsd:documentation>
+ 		Applies to nodules that are equal to or greater than 3mm.  Such nodules will be characterized or labeled and have contours.
+ 	</xsd:documentation>
+ </xsd:annotation>
+  <xsd:complexType>
+   <xsd:sequence>
+    <xsd:element ref = "noduleID"/>
+    <xsd:element ref = "characteristics" minOccurs = "0" maxOccurs = "1"/>   
+    <!-- minOccurs of 0 set to allow characteristics to be missing for case of nodules < 3mm -->
+    <xsd:element ref = "roi"  maxOccurs = "unbounded"/>
+   </xsd:sequence>
+ </xsd:complexType>
+</xsd:element>
+ 
+
+<xsd:element name = "blindedReadNodule">
+ <xsd:annotation>
+ 	<xsd:documentation>
+ 		Applies to nodules that are equal to or greater than 3mm.  Such nodules will be characterized or labeled and have contours.
+ 	</xsd:documentation>
+ </xsd:annotation>
+  <xsd:complexType>
+   <xsd:sequence>
+    <xsd:element ref = "noduleID"/>
+    <!--xsd:element ref = "characteristics"/-->   
+    <!-- characteristics only appear in unblinded reads for nodules > 3mm -->
+    <xsd:element ref = "roi"  maxOccurs = "unbounded"/>
+   </xsd:sequence>
+   </xsd:complexType>
+</xsd:element>  
+
+ <xsd:element name = "characteristics">
+  <xsd:complexType>
+   <xsd:sequence>
+	<xsd:element name = "subtlety" type = "Subtlety" minOccurs = "1" maxOccurs = "1"/>							
+	<xsd:element name = "internalStructure" type = "InternalStructure" minOccurs = "1" maxOccurs = "1" default = "1"/>							
+	<xsd:element name = "calcification" type = "Calcification" minOccurs = "1" maxOccurs = "1"/>							
+	<xsd:element name = "sphericity" type = "Sphericity" minOccurs = "1" maxOccurs = "1"/>							
+	<xsd:element name = "margin" type = "Margin" minOccurs = "1" maxOccurs = "1"/>							
+	<xsd:element name = "lobulation" type = "Lobulation" minOccurs = "1" maxOccurs = "1"/>							
+	<xsd:element name = "spiculation" type = "Spiculation" minOccurs = "1" maxOccurs = "1"/>									
+	<xsd:element name = "texture" type = "Texture" minOccurs = "1" maxOccurs = "1"/>							
+	<xsd:element name = "malignancy" type = "Malignancy" minOccurs = "1" maxOccurs = "1"/>
+	<!--xsd:element name = "lobarLocation" type ="LobarLocation" minOccurs = "1" maxOccurs = "1"/-->
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:element>
+ 
+
+ <xsd:element name = "noduleID" type = "xsd:string"/>
+
+ <xsd:element name = "roi">
+ 	<xsd:annotation>
+		<xsd:documentation>
+		
+		   Implementation of the roi tag assumes that there will be only ONE (1, uno, ein, etc) contour 
+		   (or whatever term you personally use to describe the boundary of a single object) included in the roi.
+		   Use as many rois as necessary to describe the complex drawing, but only include the description
+		   of one closed object per roi.
+		   
+		   Additionally the implementation here assumes that the roi is closed, i.e. the beginning voxel 
+		   is repeated as the ending voxel!!! 
+		   
+		</xsd:documentation>
+	</xsd:annotation>
+
+  <xsd:complexType>
+   <xsd:sequence>
+    <xsd:element ref = "imageZposition" minOccurs = "1" maxOccurs = "1"/>
+    <xsd:element ref = "imageSOP_UID" minOccurs = "1" maxOccurs = "1"/>
+    <xsd:element ref = "inclusion"  minOccurs = "1" maxOccurs = "1"/>
+    <xsd:element ref = "edgeMap"  maxOccurs = "unbounded" minOccurs = "1"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:element>
+  
+ <xsd:element name = "imageZposition">
+	<xsd:annotation>
+ 		<xsd:documentation>
+			The slice location (z coordinate) would be the third value from the tuple contained in DICOM tag 0020,0032.  The values
+			in the tuple are demarcated by the backslash character.
+		</xsd:documentation>
+	</xsd:annotation>
+  	<xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+ </xsd:element>
+ 
+ <xsd:element name = "imageSOP_UID" type = "xsd:string">
+ 	<xsd:annotation>
+ 		<xsd:documentation>
+ 			image SOP UID from DICOM file header; also used as file name in 
+ 			Mallinkrodt implementation of SimpleStorage
+ 		</xsd:documentation>
+ 	</xsd:annotation>
+ </xsd:element>
+ 
+ 
+ <xsd:element name = "inclusion">
+ 	<xsd:annotation>
+		<xsd:documentation>
+		
+		  The value of TRUE for inclusion indicates that the mask of logical "ones" for this object
+		  should be logically "OR"ed with the preexisting mask of logical "ones" for this image plane
+		  
+		  The value of FALSE for inclusion indicates "exclusion", i.e. the logical complement of mask of 
+		  ones for this object should be logically "AND"ed with the preexisting mask of logical ones.
+		  
+		</xsd:documentation>
+	</xsd:annotation>
+
+   <xsd:simpleType>
+     <xsd:restriction base="xsd:string">
+	<xsd:enumeration value="TRUE"/>
+	<xsd:enumeration value="FALSE"/>
+     </xsd:restriction>
+   </xsd:simpleType>
+ </xsd:element>
+
+
+ <xsd:element name = "edgeMap">
+   <xsd:complexType>
+   	<xsd:sequence>
+		<xsd:element name="xCoord" type="xsd:nonNegativeInteger" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="yCoord" type="xsd:nonNegativeInteger" minOccurs="1" maxOccurs="1"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:element>
+ 
+ <xsd:element name = "nonNodule">
+  <xsd:complexType>
+   <xsd:sequence>
+    <xsd:element ref = "nonNoduleID"/>
+    <xsd:element ref = "imageZposition"/>
+    <xsd:element ref = "imageSOP_UID" minOccurs = "1" maxOccurs = "1"/>
+    <xsd:element ref = "locus" maxOccurs = "1"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:element>
+ 
+ <xsd:element name = "nonNoduleID" type = "xsd:string"/>
+ <xsd:element name = "locus">
+   <xsd:complexType>
+   	<xsd:sequence>
+		<xsd:element name="xCoord" type="xsd:nonNegativeInteger" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="yCoord" type="xsd:nonNegativeInteger" minOccurs="1" maxOccurs="1"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:element>
+
+</xsd:schema>
+

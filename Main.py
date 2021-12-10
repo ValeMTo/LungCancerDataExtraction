@@ -110,7 +110,7 @@ print('Enabled features:\n\t', extractor.enabledFeatures)
 
 dirName = "C:\\NECSTCamp\LungCancerDataExtraction\data\dicom"
 imagePath = convertDicomToNRRD(dirName)
-maskPath =
+#maskPath =
 
 
 result = extractor.execute(imagePath, maskPath)
