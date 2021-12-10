@@ -3,6 +3,9 @@ import logging
 import six
 import radiomics
 
+from configparser import ConfigParser
+import pylidc
+
 import sys
 import os
 import itk
@@ -24,6 +27,31 @@ dirName = "."
 if args.dicom_directory:
     dirName = args.dicom_directory
 """
+def createConfigureFile(user):
+    config_object = ConfigParser()
+
+    config_object["dicom"]={
+        "path": "",
+        "warn": "true"
+    }
+
+    with open('C:\\Users\\'+str(user)+'\\pylidc.conf', 'w') as conf:
+        config_object.write(conf)
+
+    print("The config file is created")
+
+def changePathDicom(user, newPath):
+    config_object = ConfigParser()
+    config_object.read('C:\\Users\\'+str(user)+'\\pylidc.conf')
+
+    dicomInfo = config_object["dicom"]
+    dicomInfo["path"] = newPath
+
+    with open('C:\\Users\\'+str(user)+'\\pylidc.conf', 'w') as conf:
+        config_object.write(conf)
+
+    print("The config file has been modified")
+
 def convertDicomToNRRD(dirName):
     PixelType = itk.ctype("signed short")
     Dimension = 3
@@ -102,6 +130,16 @@ logger.addHandler(handler)
 # Do i need a filter?
 # Try all filters and add the option to use them as requested
 
+createConfigureFile("valer")
+changePathDicom("valer", "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1639143254322\\LIDC-IDRI")
+
+scans = pylidc.query(pylidc.Scan).filter(pylidc.Scan.slice_thickness <= 1)
+print(scans.count())
+
+ann = pylidc.query(pylidc.Annotation).first()
+vol = ann.scan.to_volume()
+mask = ann.boolean_mask()
+"""""
 extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
 
 print('Extraction parameters:\n\t', extractor.settings)
@@ -110,7 +148,9 @@ print('Enabled features:\n\t', extractor.enabledFeatures)
 
 dirName = "C:\\NECSTCamp\LungCancerDataExtraction\data\dicom"
 imagePath = convertDicomToNRRD(dirName)
-#maskPath =
+
+
+maskPath =""
 
 
 result = extractor.execute(imagePath, maskPath)
@@ -119,5 +159,8 @@ print('calculated features')
 for key, value in six.iteritems(result):
     print('\t', key, ':', value)
 
+"""
+
 #TODO: save the data on a cvs file
 #TODO: Visualize features - matrix and graphics
+
