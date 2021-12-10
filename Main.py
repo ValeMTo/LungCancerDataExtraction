@@ -1,15 +1,19 @@
+from configparser import ConfigParser
+
+import pylidc as pl
+import nrrd
+import numpy
 
 import logging
 import six
 import radiomics
 
-from configparser import ConfigParser
-import pylidc
-
 import sys
 import os
 import itk
 #https://itk.org/ITKExamples/src/IO/GDCM/ReadDICOMSeriesAndWrite3DImage/Documentation.html for conversion
+
+#TODO: change pylidc library
 
 """"
 parser = argparse.ArgumentParser(description="Read DICOM Series And Write 3D Image.")
@@ -27,6 +31,8 @@ dirName = "."
 if args.dicom_directory:
     dirName = args.dicom_directory
 """
+
+#TODO: move config functions to another file
 def createConfigureFile(user):
     config_object = ConfigParser()
 
@@ -131,15 +137,37 @@ logger.addHandler(handler)
 # Try all filters and add the option to use them as requested
 
 createConfigureFile("valer")
-changePathDicom("valer", "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1639143254322\\LIDC-IDRI")
+changePathDicom("valer", "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1638790098115\\LIDC-IDRI")
 
-scans = pylidc.query(pylidc.Scan).filter(pylidc.Scan.slice_thickness <= 1)
+pid = 'LIDC-IDRI-0306'
+scans = pl.query(pl.Scan).filter(pl.Scan.patient_id == pid)
 print(scans.count())
 
-ann = pylidc.query(pylidc.Annotation).first()
+scan = scans.first()
+
+print(scan.patient_id,
+      scan.pixel_spacing,
+      scan.slice_thickness,
+      scan.slice_spacing)
+
+ann = pl.query(pl.Annotation).first()
 vol = ann.scan.to_volume()
+
 mask = ann.boolean_mask()
-"""""
+bbox = ann.bbox()
+
+maskReady = numpy.array(mask.shape, dtype = numpy.bool_)
+
+itkVol = itk.GetImageFromArray(maskReady.astype(numpy.bool_))
+imageType = itk.Image[itk.B, 3]
+
+writerType = itk.ImageFileWriter[imageType]
+writer = writerType.New()
+filename = 'C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1638790098115\LIDC-IDRI\\LIDC-IDRI-0306\\01-01-2000-NA-CT LUNG SCREEN-56413\\NA-18860\\testdata.nrrd'
+writer.SetFileName(filename)
+writer.SetInput(itkVol)
+writer.Update()
+
 extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
 
 print('Extraction parameters:\n\t', extractor.settings)
@@ -150,16 +178,13 @@ dirName = "C:\\NECSTCamp\LungCancerDataExtraction\data\dicom"
 imagePath = convertDicomToNRRD(dirName)
 
 
-maskPath =""
-
-
-result = extractor.execute(imagePath, maskPath)
+result = extractor.execute(imagePath, filename)
 print('Result type:', type(result))
 print('calculated features')
 for key, value in six.iteritems(result):
     print('\t', key, ':', value)
 
-"""
+
 
 #TODO: save the data on a cvs file
 #TODO: Visualize features - matrix and graphics
