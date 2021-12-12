@@ -1,5 +1,3 @@
-from configparser import ConfigParser
-
 import pylidc as pl
 import nrrd
 import numpy
@@ -11,54 +9,47 @@ import radiomics
 import sys
 import os
 import itk
-#https://itk.org/ITKExamples/src/IO/GDCM/ReadDICOMSeriesAndWrite3DImage/Documentation.html for conversion
+
+import SimpleITK as sitk
+
+from csv import writer
 
 #TODO: change pylidc library
-
-""""
-parser = argparse.ArgumentParser(description="Read DICOM Series And Write 3D Image.")
-parser.add_argument(
-    "dicom_directory",
-    nargs="?",
-    help="If DicomDirectory is not specified, current directory is used",
-)
-parser.add_argument("output_image", nargs="?")
-parser.add_argument("series_name", nargs="?")
-args = parser.parse_args()
-
-# current directory by default
-dirName = "."
-if args.dicom_directory:
-    dirName = args.dicom_directory
 """
+def resampleMask(imagepath, maskpath, resMaskPath):
+    rif = sitk.ResampleImageFilter()
+    rif.SetReferenceImage(imagepath)
+    rif.SetOutputPixelType(maskpath.GetPixelID())
+    rif.SetInterpolator(sitk.sitkNearestNeighbor)
+    resMask = rif.Execute(maskpath)
 
-#TODO: move config functions to another file
-def createConfigureFile(user):
-    config_object = ConfigParser()
+    sitk.WriteImage(resMask, resMaskPath, True)  # True enables compression when saving the resampled mask
+"""
+#TODO: substitute the function in the executable part
+def extractMask(maskPath, pid, numSlice):
+    scans = pl.query(pl.Scan).filter(pl.Scan.patient_id == pid)
+    print(scans.count())
+    scan = scans.first()
 
-    config_object["dicom"]={
-        "path": "",
-        "warn": "true"
-    }
+    print(scan.patient_id,
+          scan.pixel_spacing,
+          scan.slice_thickness,
+          scan.slice_spacing)
 
-    with open('C:\\Users\\'+str(user)+'\\pylidc.conf', 'w') as conf:
-        config_object.write(conf)
+    # The input come from base and path in scan class in pylidc library
+    ann = pl.query(pl.Annotation).first()
 
-    print("The config file is created")
+    booleanMask = ann.boolean_mask()  # numpy.ndarray
+    booleanMask = booleanMask.astype('int8')
+    bbox = ann.bbox()  # tuple
 
-def changePathDicom(user, newPath):
-    config_object = ConfigParser()
-    config_object.read('C:\\Users\\'+str(user)+'\\pylidc.conf')
 
-    dicomInfo = config_object["dicom"]
-    dicomInfo["path"] = newPath
+    mask = numpy.zeros((512, 512, numSlice))
+    mask[bbox[0].start:bbox[0].stop, bbox[1].start:bbox[1].stop, bbox[2].start:bbox[2].stop] = booleanMask
+    nrrd.write(maskPath, mask)
 
-    with open('C:\\Users\\'+str(user)+'\\pylidc.conf', 'w') as conf:
-        config_object.write(conf)
 
-    print("The config file has been modified")
-
-def convertDicomToNRRD(dirName):
+def convertDicomToNRRD(dirName, outFileName):
     PixelType = itk.ctype("signed short")
     Dimension = 3
 
@@ -99,11 +90,6 @@ def convertDicomToNRRD(dirName):
         reader.ForceOrthogonalDirectionOff()
 
         writer = itk.ImageFileWriter[ImageType].New()
-        outFileName = os.path.join(dirName, seriesIdentifier + ".nrrd")
-        """"
-        if args.output_image:
-            outFileName = args.output_image
-        """
         writer.SetFileName(outFileName)
         writer.UseCompressionOn()
         writer.SetInput(reader.GetOutput())
@@ -125,67 +111,40 @@ formatter = logging.Formatter('%(levelname)s:%(name)s: %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-
-#TODO: add input (treat DICOM images)
-# Getting data
-
-# Instantiate data
-
-#TODO: parameter file. The following code extracts data by default options
-#parameter of first order: pyradiomics -> radiomic feature -> first order statistics && gray level co-occurrence matrix (GMLM) features
-# Do i need a filter?
-# Try all filters and add the option to use them as requested
-
-createConfigureFile("valer")
-changePathDicom("valer", "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1638790098115\\LIDC-IDRI")
-
-pid = 'LIDC-IDRI-0306'
-scans = pl.query(pl.Scan).filter(pl.Scan.patient_id == pid)
-print(scans.count())
-
-scan = scans.first()
-
-print(scan.patient_id,
-      scan.pixel_spacing,
-      scan.slice_thickness,
-      scan.slice_spacing)
-
-ann = pl.query(pl.Annotation).first()
-vol = ann.scan.to_volume()
-
-mask = ann.boolean_mask()
-bbox = ann.bbox()
-
-maskReady = numpy.array(mask.shape, dtype = numpy.bool_)
-
-itkVol = itk.GetImageFromArray(maskReady.astype(numpy.bool_))
-imageType = itk.Image[itk.B, 3]
-
-writerType = itk.ImageFileWriter[imageType]
-writer = writerType.New()
-filename = 'C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1638790098115\LIDC-IDRI\\LIDC-IDRI-0306\\01-01-2000-NA-CT LUNG SCREEN-56413\\NA-18860\\testdata.nrrd'
-writer.SetFileName(filename)
-writer.SetInput(itkVol)
-writer.Update()
-
 extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
+
+dirName = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1639326440222\\LIDC-IDRI\\LIDC-IDRI-0350\\1.3.6.1.4.1.14519.5.2.1.6279.6001.402240049299350560004923763412\\1.3.6.1.4.1.14519.5.2.1.6279.6001.121108220866971173712229588402"
+imagePath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\image.nrrd"
+convertDicomToNRRD(dirName, imagePath)
+
+pid = 'LIDC-IDRI-0350'
+#tmpPath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\tmp.nrrd"
+maskPath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\label.nrrd"
+extractMask(maskPath, pid, len(os.listdir(dirName))-1)
+
+image = itk.imread(imagePath)
+print(type(image))
+mask = itk.imread(maskPath)
+boundingBox, correctedMask =radiomics.imageoperations.checkMask(image, mask, correctMask=True)
+itk.imwrite(correctedMask, maskPath)
+
+
+#resampleMask(imagePath, tmpPath, maskPath)
 
 print('Extraction parameters:\n\t', extractor.settings)
 print('Enabled filters:\n\t', extractor.enabledImagetypes)
 print('Enabled features:\n\t', extractor.enabledFeatures)
 
-dirName = "C:\\NECSTCamp\LungCancerDataExtraction\data\dicom"
-imagePath = convertDicomToNRRD(dirName)
+result = extractor.execute(imagePath, maskPath)
 
+file = open('featureExtraction.csv', 'w')
+writer = writer(file)
 
-result = extractor.execute(imagePath, filename)
+print('calculating features')
 print('Result type:', type(result))
-print('calculated features')
 for key, value in six.iteritems(result):
-    print('\t', key, ':', value)
-
-
-
-#TODO: save the data on a cvs file
-#TODO: Visualize features - matrix and graphics
+    data = [str(key), str(value)]
+    writer.writerow(data)
+print('saved features')
+file.close()
 
