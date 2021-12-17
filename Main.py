@@ -2,7 +2,6 @@ import pylidc as pl
 import nrrd
 import numpy
 
-import logging
 import six
 import radiomics
 
@@ -10,44 +9,35 @@ import sys
 import os
 import itk
 
-import SimpleITK as sitk
-
 from csv import writer
 
-#TODO: change pylidc library
-"""
-def resampleMask(imagepath, maskpath, resMaskPath):
-    rif = sitk.ResampleImageFilter()
-    rif.SetReferenceImage(imagepath)
-    rif.SetOutputPixelType(maskpath.GetPixelID())
-    rif.SetInterpolator(sitk.sitkNearestNeighbor)
-    resMask = rif.Execute(maskpath)
+pid = "LIDC-IDRI-0003"
+dirName = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1639521588960\\LIDC-IDRI\\LIDC-IDRI-0003\\1.3.6.1.4.1.14519.5.2.1.6279.6001.101370605276577556143013894866\\1.3.6.1.4.1.14519.5.2.1.6279.6001.170706757615202213033480003264"
+imagePath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\image.nrrd"
+maskPath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\label.nrrd"
 
-    sitk.WriteImage(resMask, resMaskPath, True)  # True enables compression when saving the resampled mask
-"""
-#TODO: substitute the function in the executable part
-def extractMask(maskPath, pid, numSlice):
+def extractMask(imagePath, maskPath,pid, numSlice):
     scans = pl.query(pl.Scan).filter(pl.Scan.patient_id == pid)
-    print(scans.count())
     scan = scans.first()
 
-    print(scan.patient_id,
-          scan.pixel_spacing,
-          scan.slice_thickness,
-          scan.slice_spacing)
-
-    # The input come from base and path in scan class in pylidc library
     ann = pl.query(pl.Annotation).first()
 
-    booleanMask = ann.boolean_mask()  # numpy.ndarray
+    booleanMask = ann.boolean_mask()
+    bbox = ann.bbox()
     booleanMask = booleanMask.astype('int8')
-    bbox = ann.bbox()  # tuple
+    booleanMask = numpy.swapaxes(booleanMask,0,1)
 
 
     mask = numpy.zeros((512, 512, numSlice))
-    mask[bbox[0].start:bbox[0].stop, bbox[1].start:bbox[1].stop, bbox[2].start:bbox[2].stop] = booleanMask
-    nrrd.write(maskPath, mask)
 
+    padding = [-7, 8, 29] #LIDC-IDRI-0003
+    mask[bbox[1].start+padding[1]:bbox[1].stop+padding[1], bbox[0].start+padding[0]:bbox[0].stop+padding[0], bbox[2].start+padding[2]:bbox[2].stop++padding[2]] = booleanMask
+    mask = numpy.flip(mask, 1)
+
+
+    header = nrrd.read_header(imagePath)
+
+    nrrd.write(maskPath, mask, header)
 
 def convertDicomToNRRD(dirName, outFileName):
     PixelType = itk.ctype("signed short")
@@ -67,20 +57,9 @@ def convertDicomToNRRD(dirName, outFileName):
         print("No DICOMs in: " + dirName)
         sys.exit(1)
 
-    print("The directory: " + dirName)
-    print("Contains the following DICOM Series: ")
-    for uid in seriesUID:
-        print(uid)
-
     seriesFound = False
     for uid in seriesUID:
         seriesIdentifier = uid
-        """"
-        if args.series_name:
-            seriesIdentifier = args.series_name
-            seriesFound = True
-        """
-        print("Reading: " + seriesIdentifier)
         fileNames = namesGenerator.GetFileNames(seriesIdentifier)
 
         reader = itk.ImageSeriesReader[ImageType].New()
@@ -98,24 +77,11 @@ def convertDicomToNRRD(dirName, outFileName):
 
         if seriesFound:
             break
-
-#Setting up logging
-radiomics.setVerbosity(logging.WARNING)
-
-#TODO: analyse with DEBUG and INFO verbosity
-logger = radiomics.logger
-logger.setLevel(logging.WARNING)
-
-handler = logging.FileHandler(filename='testLog.txt', mode = 'w')
-formatter = logging.Formatter('%(levelname)s:%(name)s: %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+#co
 
 extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
-
-dirName = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\manifest-1639326440222\\LIDC-IDRI\\LIDC-IDRI-0350\\1.3.6.1.4.1.14519.5.2.1.6279.6001.402240049299350560004923763412\\1.3.6.1.4.1.14519.5.2.1.6279.6001.121108220866971173712229588402"
-imagePath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\image.nrrd"
 convertDicomToNRRD(dirName, imagePath)
+extractMask(imagePath, maskPath, pid, len(os.listdir(dirName))-1)
 
 pid = 'LIDC-IDRI-0350'
 #tmpPath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\tmp.nrrd"
@@ -137,14 +103,14 @@ print('Enabled features:\n\t', extractor.enabledFeatures)
 
 result = extractor.execute(imagePath, maskPath)
 
+print("Opening file...")
 file = open('featureExtraction.csv', 'w')
 writer = writer(file)
 
-print('calculating features')
-print('Result type:', type(result))
+print('calculating features...')
 for key, value in six.iteritems(result):
     data = [str(key), str(value)]
     writer.writerow(data)
-print('saved features')
+print('Saved features')
 file.close()
 
