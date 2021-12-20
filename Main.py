@@ -83,20 +83,6 @@ extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
 convertDicomToNRRD(dirName, imagePath)
 extractMask(imagePath, maskPath, pid, len(os.listdir(dirName))-1)
 
-pid = 'LIDC-IDRI-0350'
-#tmpPath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\tmp.nrrd"
-maskPath = "C:\\NECSTCamp\\LungCancerDataExtraction\\data\\conversionNRRD\\label.nrrd"
-extractMask(maskPath, pid, len(os.listdir(dirName))-1)
-
-image = itk.imread(imagePath)
-print(type(image))
-mask = itk.imread(maskPath)
-boundingBox, correctedMask =radiomics.imageoperations.checkMask(image, mask, correctMask=True)
-itk.imwrite(correctedMask, maskPath)
-
-
-#resampleMask(imagePath, tmpPath, maskPath)
-
 print('Extraction parameters:\n\t', extractor.settings)
 print('Enabled filters:\n\t', extractor.enabledImagetypes)
 print('Enabled features:\n\t', extractor.enabledFeatures)
