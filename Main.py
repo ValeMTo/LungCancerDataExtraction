@@ -30,8 +30,7 @@ def extractMask(imagePath, maskPath,pid, numSlice):
 
     mask = numpy.zeros((512, 512, numSlice))
 
-    padding = [-7, 8, 29] #LIDC-IDRI-0003
-    mask[bbox[1].start+padding[1]:bbox[1].stop+padding[1], bbox[0].start+padding[0]:bbox[0].stop+padding[0], bbox[2].start+padding[2]:bbox[2].stop++padding[2]] = booleanMask
+    mask[bbox[1].start:bbox[1].stop, bbox[0].start:bbox[0].stop, bbox[2].start:bbox[2].stop] = booleanMask
     mask = numpy.flip(mask, 1)
 
 
