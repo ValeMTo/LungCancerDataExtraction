@@ -18,7 +18,7 @@
 	\maketitle
 
 	\begin{abstract}
-This report describes a framework able to extract radiomic features, thanks to the open-source python package: pyradiomics \cite{pyradiomics}.
+This report describes a framework able to extract radiomic features, thanks to the open-source python package: pyradiomics (1).
 Radiomic data has the potential to uncover disease characteristics that fail to be appreciated by the naked eye.
 The central hypothesis of radiomics is that distinctive imaging algorithms quantify the state of diseases, and thereby provide valuable information for personalized medicine. 
 The paper defines how to extract lung tumor nodules characteristics, which are in The Cancer Imaging Archive, exactly in the collection LIDC-IDRI.
@@ -26,7 +26,7 @@ The framework provides a simple interface for the extraction of the main feature
 	\end{abstract}
 
 	\section{Introduction}\label{sec:intro}
-The framework is able to extract radiomic features, thanks to the open-source python package: pyradiomics \cite{pyradiomics}. 
+The framework is able to extract radiomic features, thanks to the open-source python package: pyradiomics (1). 
 This package establishes a reference standard for Radiomic Analysis, and provide a tested and maintained open-source platform for easy and reproducible Radiomic Feature extraction(Warning: not intended for clinical use.).The platform supports both the feature extraction in 2D and 3D and can be used to calculate single values per feature for a region of interest.
 
 The framework is implemented to extract features from the LIDC-IDRI dataset in The Cancer Imaging Archive (TCIA), a service which de-identifies and hosts a large publicly available archive of medical images of cancer.  TCIA is funded by the Cancer Imaging Program (CIP), a part of the United States  National Cancer Institute (NCI), and is managed by the Frederick National Laboratory for Cancer Research (FNLCR).
@@ -97,7 +97,7 @@ The variable pid is a string which has the corresponding patientID.
 
 	\subsubsection{imagePath}
 The string imagePath indicates the path in which converted DICOMs will be stored.
-The conversion is from a series of DICOMs into a SimpleITK object (NRRD) that can be read by the pyradiomics \cite{pyradiomics} package.
+The conversion is from a series of DICOMs into a SimpleITK object (NRRD) that can be read by the pyradiomics (1) package.
 
 	\subsubsection{maskPath}
 The string maskPath indicates the path in which the 3D mask (file format: NRRD) of the volume is stored.
@@ -187,9 +187,6 @@ These triangles are defined in such a way, that the normal (obtained from the cr
 
 	\bibitem{pyradiomics}
 van Griethuysen, J. J. M., Fedorov, A., Parmar, C., Hosny, A., Aucoin, N., Narayan, V., Beets-Tan, R. G. H., Fillon-Robin, J. C., Pieper, S., Aerts, H. J. W. L. (2017). Computational Radiomics System to Decode the Radiographic Phenotype. Cancer Research, 77(21), e104–e107. `https://doi.org/10.1158/0008-5472.CAN-17-0339 <https://doi.org/10.1158/0008-5472.CAN-17-0339>`
-
-	\bibitem{pylidc}
-Matthew C. Hancock, Jerry F. Magnan.  Lung nodule malignancy classification using only radiologist quantified image features as inputs to statistical learning algorithms: probing the Lung Image Database Consortium dataset with two statistical learning methods.  SPIE Journal of Medical Imaging. Dec. 2016.  http://dx.doi.org/10.1117/1.JMI.3.4.044504
 
 	\end{thebibliography}
 
