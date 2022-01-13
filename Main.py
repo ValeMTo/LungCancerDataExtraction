@@ -76,11 +76,11 @@ def convertDicomToNRRD(dirName, outFileName):
 
         if seriesFound:
             break
-#co
 
-extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
 convertDicomToNRRD(dirName, imagePath)
 extractMask(imagePath, maskPath, pid, len(os.listdir(dirName))-1)
+
+extractor = radiomics.featureextractor.RadiomicsFeatureExtractor()
 
 print('Extraction parameters:\n\t', extractor.settings)
 print('Enabled filters:\n\t', extractor.enabledImagetypes)
